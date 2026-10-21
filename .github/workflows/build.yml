@@ -5,7 +5,7 @@ on:
     - cron: "0 3,9,15,21 * * *"
   push:
     branches:
-      - master
+      - main
     paths-ignore:
       - "**/README.md"
 
@@ -33,40 +33,40 @@ jobs:
         shell: bash
 
       - name: Checkout runetfreedom/russia-domains-list
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: runetfreedom/russia-domains-list
           path: additional
 
       - name: Checkout runetfreedom/domain-list-custom
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: runetfreedom/domain-list-custom
           path: custom
 
       - name: Checkout v2fly/domain-list-community
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: v2fly/domain-list-community
           path: community
 
       - name: Checkout mobile whitelist
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: hxehex/russia-mobile-internet-whitelist
           path: mobile-whitelist
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: ./custom/go.mod
           cache-dependency-path: ./custom/go.sum
 
       - name: Get and add domain lists
         run: |
-          curl -sSL $ANTIFILTER_DOWNLOAD > ./antifilter-download.txt
-          curl -sSL $ANTIFILTER_DOWNLOAD_COMMUNITY > ./antifilter-download-community.txt
-          curl -sSL $REFILTER_ALL > ./refilter.txt
+          curl -sSL $ANTIFILTER_DOWNLOAD | tr -d '\r' | grep -iE '^[a-z0-9._-]+$' > ./antifilter-download.txt
+          curl -sSL $ANTIFILTER_DOWNLOAD_COMMUNITY | tr -d '\r' | grep -iE '^[a-z0-9._-]+$' > ./antifilter-download-community.txt
+          curl -sSL $REFILTER_ALL | tr -d '\r' | grep -iE '^[a-z0-9._-]+$' > ./refilter.txt
           curl -sSL $WIN_SPY | grep "0.0.0.0" | awk '{print $2}' > ./win-spy.txt
           curl -sSL $WIN_UPDATE | grep "0.0.0.0" | awk '{print $2}' > ./win-update.txt
           curl -sSL $WIN_EXTRA | grep "0.0.0.0" | awk '{print $2}' > ./win-extra.txt
